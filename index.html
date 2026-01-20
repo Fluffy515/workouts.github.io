@@ -7,67 +7,426 @@
 
   <!-- PWA -->
   <link rel="manifest" href="/manifest.webmanifest">
-  <meta name="theme-color" content="#111111">
+  <meta name="theme-color" content="#0b0d12">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <style>
-    :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
-    body { margin: 0; background: #f6f7fb; color: #111; }
-    header { padding: 16px 20px; background: white; border-bottom: 1px solid #e7e7ee; position: sticky; top: 0; z-index: 10; }
-    main { max-width: 980px; margin: 0 auto; padding: 16px 20px 40px; display: grid; grid-template-columns: 360px 1fr; gap: 16px; }
-    @media (max-width: 900px){ main{ grid-template-columns: 1fr; } }
-    .card { background: white; border: 1px solid #e7e7ee; border-radius: 12px; padding: 14px; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
-    h1 { margin: 0; font-size: 18px; }
-    h2 { margin: 0 0 10px; font-size: 14px; color: #333; text-transform: uppercase; letter-spacing: .06em; }
-    label { display: block; font-size: 12px; color: #444; margin: 10px 0 6px; }
-    input, textarea, button {
-      font: inherit; width: 100%; box-sizing: border-box;
-      padding: 10px; border: 1px solid #d9d9e6; border-radius: 10px; background: white;
+    :root{
+      --bg: #0b0d12;
+      --panel: rgba(255,255,255,.06);
+      --panel2: rgba(255,255,255,.08);
+      --border: rgba(255,255,255,.10);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.65);
+      --muted2: rgba(255,255,255,.50);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 16px;
+      --radius2: 20px;
+      --ring: 0 0 0 3px rgba(99,102,241,.35); /* indigo-ish ring */
+      --accent: #7c3aed; /* violet */
+      --accent2: #22c55e; /* green */
+      --danger: #ef4444;
+      --danger2: #b91c1c;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
     }
-    textarea { min-height: 70px; resize: vertical; }
-    button { cursor: pointer; border: 1px solid #d0d0e0; background: #111; color: white; }
-    button.secondary { background: white; color: #111; }
-    button.danger { background: #b00020; border-color: #b00020; }
-    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .muted { color: #666; font-size: 12px; }
-    .list { display: grid; gap: 8px; }
-    .workoutItem { padding: 10px; border: 1px solid #eee; border-radius: 10px; display: grid; gap: 4px; }
-    .workoutItem.active { border-color: #111; }
-    .workoutTop { display:flex; justify-content: space-between; align-items: center; gap: 10px; }
-    .pill { font-size: 12px; padding: 4px 8px; border: 1px solid #e7e7ee; border-radius: 999px; color: #333; background: #fafafa; }
-    .exercise { border: 1px solid #eee; border-radius: 12px; padding: 10px; margin-top: 10px; }
-    .exerciseHeader { display:flex; justify-content: space-between; align-items:center; gap: 10px; }
-    .sets { margin-top: 10px; display: grid; gap: 8px; }
-    .setRow { display: grid; grid-template-columns: 70px 1fr 1fr 1fr; gap: 8px; align-items: center; }
-    .setRow input { padding: 8px; border-radius: 8px; }
-    .setRow .setNum { font-size: 12px; color: #555; }
-    .actions { display:flex; gap: 8px; margin-top: 10px; }
-    .actions button { width: auto; padding: 10px 12px; }
-    .topActions { display:flex; gap: 8px; flex-wrap: wrap; }
-    .topActions button { width: auto; padding: 8px 10px; }
-    .split { display:flex; justify-content: space-between; align-items: center; gap: 10px; }
-    .small { font-size: 12px; }
-    .hr { height: 1px; background: #eee; margin: 12px 0; }
-    .toast { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); background: #111; color: #fff; padding: 10px 12px; border-radius: 10px; opacity: 0; pointer-events:none; transition: opacity .2s; z-index: 20; }
-    .toast.show { opacity: 1; }
+
+    /* light mode auto */
+    @media (prefers-color-scheme: light){
+      :root{
+        --bg: #f7f7fb;
+        --panel: rgba(0,0,0,.04);
+        --panel2: rgba(0,0,0,.06);
+        --border: rgba(0,0,0,.08);
+        --text: rgba(10,12,18,.92);
+        --muted: rgba(10,12,18,.62);
+        --muted2: rgba(10,12,18,.48);
+        --shadow: 0 10px 30px rgba(0,0,0,.12);
+      }
+    }
+
+    *{ box-sizing: border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: var(--font);
+      color: var(--text);
+      background:
+        radial-gradient(1200px 600px at 20% -10%, rgba(124,58,237,.35), transparent 60%),
+        radial-gradient(900px 500px at 90% 10%, rgba(34,197,94,.25), transparent 55%),
+        radial-gradient(700px 500px at 50% 100%, rgba(59,130,246,.20), transparent 60%),
+        var(--bg);
+    }
+
+    /* Header */
+    header{
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background: linear-gradient(to bottom, rgba(0,0,0,.35), rgba(0,0,0,.10));
+      border-bottom: 1px solid var(--border);
+    }
+    @media (prefers-color-scheme: light){
+      header{
+        background: linear-gradient(to bottom, rgba(255,255,255,.75), rgba(255,255,255,.35));
+      }
+    }
+
+    .headerInner{
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 14px 18px;
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      min-width: 0;
+    }
+    .logo{
+      width: 38px; height: 38px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(124,58,237,.95), rgba(34,197,94,.75));
+      box-shadow: 0 12px 30px rgba(0,0,0,.25);
+      display:grid;
+      place-items:center;
+      font-weight: 800;
+      color: white;
+      letter-spacing: -.02em;
+      user-select:none;
+    }
+    .brandText{ min-width: 0; }
+    .brandTitle{
+      font-size: 15px;
+      font-weight: 780;
+      letter-spacing: -.01em;
+      margin: 0;
+      line-height: 1.1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .brandSub{
+      margin: 0;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .topActions{
+      display:flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    /* Layout */
+    main{
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 18px;
+      display:grid;
+      grid-template-columns: 380px 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 980px){
+      main{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      background: linear-gradient(180deg, var(--panel2), var(--panel));
+      border: 1px solid var(--border);
+      border-radius: var(--radius2);
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .sectionTitle{
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    h2{
+      margin: 0;
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+
+    .pill{
+      font-size: 12px;
+      padding: 5px 10px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--muted);
+      background: rgba(255,255,255,.04);
+      white-space: nowrap;
+    }
+
+    label{
+      display:block;
+      font-size: 12px;
+      color: var(--muted);
+      margin: 10px 0 6px;
+      font-weight: 600;
+    }
+
+    .row{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    @media (max-width: 520px){
+      .row{ grid-template-columns: 1fr; }
+    }
+
+    input, textarea, button{
+      font: inherit;
+    }
+
+    input, textarea{
+      width: 100%;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      border-radius: 14px;
+      padding: 11px 12px;
+      outline: none;
+      transition: transform .08s ease, border-color .15s ease, background .15s ease;
+    }
+    input::placeholder, textarea::placeholder{ color: var(--muted2); }
+    input:focus, textarea:focus{
+      border-color: rgba(124,58,237,.55);
+      box-shadow: var(--ring);
+      background: rgba(255,255,255,.08);
+    }
+    textarea{
+      min-height: 80px;
+      resize: vertical;
+      line-height: 1.35;
+    }
+
+    .actions{
+      display:flex;
+      gap: 10px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    button{
+      width: 100%;
+      border-radius: 14px;
+      padding: 11px 12px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: transform .08s ease, background .15s ease, border-color .15s ease, opacity .15s ease;
+      user-select: none;
+    }
+    button:active{ transform: translateY(1px); }
+
+    .btnPrimary{
+      background: linear-gradient(135deg, rgba(124,58,237,.95), rgba(59,130,246,.75));
+      border-color: rgba(124,58,237,.55);
+      color: white;
+      font-weight: 750;
+    }
+    .btnSecondary{
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+    }
+    .btnDanger{
+      background: linear-gradient(135deg, rgba(239,68,68,.95), rgba(185,28,28,.75));
+      border-color: rgba(239,68,68,.55);
+      color: white;
+      font-weight: 750;
+    }
+    .btnSmall{
+      width: auto;
+      padding: 9px 10px;
+      border-radius: 12px;
+      font-size: 13px;
+    }
+
+    .muted{
+      color: var(--muted);
+      font-size: 12px;
+      margin: 10px 0 0;
+      line-height: 1.35;
+    }
+
+    .divider{
+      height: 1px;
+      background: var(--border);
+      margin: 14px 0;
+    }
+
+    /* History list */
+    .list{
+      display:grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .workoutItem{
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      background: rgba(255,255,255,.04);
+      cursor: pointer;
+      transition: transform .08s ease, background .15s ease, border-color .15s ease;
+    }
+    .workoutItem:hover{ background: rgba(255,255,255,.06); }
+    .workoutItem:active{ transform: translateY(1px); }
+    .workoutItem.active{
+      border-color: rgba(124,58,237,.55);
+      box-shadow: var(--ring);
+      background: rgba(124,58,237,.10);
+    }
+
+    .workoutTop{
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+    .dateStrong{ font-weight: 800; letter-spacing: -.01em; }
+    .titleLine{
+      font-weight: 750;
+      letter-spacing: -.01em;
+      line-height: 1.25;
+    }
+    .snippet{
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+      margin-top: 4px;
+    }
+
+    /* Detail */
+    .detailTop{
+      display:flex;
+      align-items:flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .detailDate{ font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .detailTitle{ font-size: 20px; font-weight: 850; letter-spacing: -.02em; margin: 2px 0 0; }
+
+    /* Exercises */
+    .exercise{
+      margin-top: 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      background: rgba(255,255,255,.04);
+    }
+
+    .exerciseHeader{
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .exerciseName{
+      font-weight: 850;
+      letter-spacing: -.01em;
+    }
+
+    .sets{
+      margin-top: 10px;
+      display:grid;
+      gap: 10px;
+    }
+
+    .setRow{
+      display:grid;
+      grid-template-columns: 70px 1fr 1fr 1fr;
+      gap: 8px;
+      align-items:center;
+    }
+    @media (max-width: 520px){
+      .setRow{ grid-template-columns: 60px 1fr 1fr; }
+      .setRow .col3{ grid-column: span 2; }
+    }
+
+    .setNum{
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .inlineBtns{
+      display:flex;
+      gap: 8px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+
+    /* Toast */
+    .toast{
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(10,12,18,.92);
+      color: white;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: 0 12px 30px rgba(0,0,0,.35);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s ease;
+      z-index: 80;
+      max-width: calc(100% - 32px);
+      text-align: center;
+      font-weight: 650;
+    }
+    .toast.show{ opacity: 1; }
   </style>
 </head>
 
 <body>
-<header class="split">
-  <h1>Workout Tracker</h1>
-  <div class="topActions">
-    <button class="secondary" id="exportBtn" title="Copy all data as JSON">Export</button>
-    <button class="secondary" id="importBtn" title="Import from a JSON backup">Import</button>
-    <button class="secondary" id="backupBtn" title="Download a JSON backup file">Download Backup</button>
+<header>
+  <div class="headerInner">
+    <div class="brand">
+      <div class="logo">W</div>
+      <div class="brandText">
+        <p class="brandTitle">Workout Tracker</p>
+        <p class="brandSub">Local saves · PWA install · Backup anytime</p>
+      </div>
+    </div>
+    <div class="topActions">
+      <button class="btnSecondary btnSmall" id="exportBtn" title="Copy all data as JSON">Export</button>
+      <button class="btnSecondary btnSmall" id="importBtn" title="Import from a JSON backup">Import</button>
+      <button class="btnSecondary btnSmall" id="backupBtn" title="Download a JSON backup file">Backup</button>
+    </div>
   </div>
 </header>
 
 <main>
   <!-- Left: create + history -->
   <section class="card">
-    <h2>New workout</h2>
+    <div class="sectionTitle">
+      <h2>New workout</h2>
+      <span class="pill">quick add</span>
+    </div>
+
     <div class="row">
       <div>
         <label>Date</label>
@@ -78,20 +437,28 @@
         <input type="text" id="titleInput" placeholder="Push / Pull / Legs..." />
       </div>
     </div>
+
     <label>Notes</label>
-    <textarea id="notesInput" placeholder="How you felt, goals, etc."></textarea>
+    <textarea id="notesInput" placeholder="How you felt, goals, cues, etc."></textarea>
+
     <div class="actions">
-      <button id="createWorkoutBtn">Create workout</button>
-      <button class="secondary" id="clearAllBtn" title="Deletes all workouts">Clear all</button>
+      <button class="btnPrimary" id="createWorkoutBtn">Create workout</button>
+      <button class="btnSecondary" id="clearAllBtn" title="Deletes all workouts on this device">Clear all</button>
     </div>
-    <p class="muted">Saved locally on this device (no login). Use “Download Backup” occasionally.</p>
 
-    <div class="hr"></div>
+    <p class="muted">Tip: use “Backup” once in a while so you never lose your logs.</p>
 
-    <h2>History</h2>
+    <div class="divider"></div>
+
+    <div class="sectionTitle">
+      <h2>History</h2>
+      <span class="pill" id="historyCountPill">0</span>
+    </div>
+
     <label>Search</label>
     <input id="searchInput" placeholder="bench, squat, legs..." />
-    <div class="list" id="workoutList" style="margin-top:10px;"></div>
+
+    <div class="list" id="workoutList"></div>
   </section>
 
   <!-- Right: workout detail -->
@@ -101,21 +468,21 @@
     </div>
 
     <div id="detail" style="display:none;">
-      <div class="workoutTop">
+      <div class="detailTop">
         <div>
-          <div class="small muted" id="detailDate"></div>
-          <div style="font-size:18px; font-weight:700;" id="detailTitle"></div>
+          <div class="detailDate" id="detailDate"></div>
+          <div class="detailTitle" id="detailTitle"></div>
         </div>
-        <button class="danger" id="deleteWorkoutBtn">Delete</button>
+        <button class="btnDanger btnSmall" id="deleteWorkoutBtn">Delete</button>
       </div>
 
       <label style="margin-top:12px;">Workout notes</label>
-      <textarea id="detailNotes"></textarea>
+      <textarea id="detailNotes" placeholder="Notes for this session..."></textarea>
 
-      <div class="hr"></div>
+      <div class="divider"></div>
 
-      <div class="split">
-        <h2 style="margin:0;">Exercises</h2>
+      <div class="sectionTitle">
+        <h2>Exercises</h2>
         <span class="pill" id="exerciseCountPill">0 exercises</span>
       </div>
 
@@ -125,7 +492,7 @@
           <input id="exerciseNameInput" placeholder="Bench Press" />
         </div>
         <div style="display:flex; align-items:flex-end;">
-          <button id="addExerciseBtn">Add</button>
+          <button class="btnPrimary" id="addExerciseBtn">Add</button>
         </div>
       </div>
 
@@ -185,6 +552,15 @@
     return db.workouts.find(w => w.id === selectedWorkoutId) || null;
   }
 
+  function escapeHtml(str){
+    return String(str ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+
   // ---------- CRUD ----------
   function createWorkout(){
     const date = $("dateInput").value;
@@ -234,6 +610,7 @@
     const w = getSelectedWorkout();
     w.exercises = w.exercises.filter(e => e.id !== exId);
     save(db);
+    toast("Exercise deleted");
     render();
   }
 
@@ -243,6 +620,7 @@
     const next = ex.sets.length + 1;
     ex.sets.push({ id: uid(), set_number: next, weight: "", reps: "", rpe: "", notes: "" });
     save(db);
+    toast("Set added");
     render();
   }
 
@@ -252,6 +630,7 @@
     ex.sets = ex.sets.filter(s => s.id !== setId);
     ex.sets.forEach((s,i)=>s.set_number=i+1);
     save(db);
+    toast("Set deleted");
     render();
   }
 
@@ -272,7 +651,7 @@
   // ---------- Import/Export ----------
   function exportJSON(){
     const data = JSON.stringify(db, null, 2);
-    navigator.clipboard?.writeText(data).then(()=>toast("Copied JSON to clipboard")).catch(()=>{
+    navigator.clipboard?.writeText(data).then(()=>toast("Copied JSON")).catch(()=>{
       prompt("Copy your data:", data);
     });
   }
@@ -306,9 +685,14 @@
 
   // ---------- Render ----------
   function render(){
+    sortWorkouts();
+
+    // History count pill
+    $("historyCountPill").textContent = String(workoutsFiltered().length);
+
+    // left list
     const list = $("workoutList");
     list.innerHTML = "";
-    sortWorkouts();
     const items = workoutsFiltered();
 
     if (items.length === 0){
@@ -318,18 +702,21 @@
         const div = document.createElement("div");
         div.className = "workoutItem" + (w.id === selectedWorkoutId ? " active" : "");
         div.onclick = () => selectWorkout(w.id);
+
+        const snippet = (w.notes || "").trim();
         div.innerHTML = `
           <div class="workoutTop">
-            <div><strong>${escapeHtml(w.date)}</strong></div>
+            <div class="dateStrong">${escapeHtml(w.date)}</div>
             <span class="pill">${w.exercises.length} ex</span>
           </div>
-          <div>${escapeHtml(w.title || "Workout")}</div>
-          <div class="muted">${escapeHtml((w.notes || "").slice(0, 70))}${(w.notes||"").length>70?"…":""}</div>
+          <div class="titleLine">${escapeHtml(w.title || "Workout")}</div>
+          <div class="snippet">${escapeHtml(snippet.slice(0, 70))}${snippet.length>70?"…":""}</div>
         `;
         list.appendChild(div);
       }
     }
 
+    // detail panel
     const w = getSelectedWorkout();
     if (!w){
       $("emptyState").style.display = "block";
@@ -359,23 +746,22 @@
             data-ex="${ex.id}" data-set="${s.id}" data-field="weight" />
           <input inputmode="numeric" placeholder="Reps" value="${escapeHtml(s.reps)}"
             data-ex="${ex.id}" data-set="${s.id}" data-field="reps" />
-          <div style="display:flex; gap:8px;">
+          <div class="col3" style="display:flex; gap:8px;">
             <input inputmode="decimal" placeholder="RPE" value="${escapeHtml(s.rpe)}"
               data-ex="${ex.id}" data-set="${s.id}" data-field="rpe" />
-            <button class="secondary" style="width:auto; padding:8px 10px;"
-              data-delset="1" data-ex="${ex.id}" data-set="${s.id}">✕</button>
+            <button class="btnSecondary btnSmall" style="width:auto;" data-delset="1" data-ex="${ex.id}" data-set="${s.id}">✕</button>
           </div>
         </div>
-        <input style="margin-top:6px;" placeholder="Set notes (optional)" value="${escapeHtml(s.notes)}"
+        <input placeholder="Set notes (optional)" value="${escapeHtml(s.notes)}"
           data-ex="${ex.id}" data-set="${s.id}" data-field="notes" />
       `).join("");
 
       exDiv.innerHTML = `
         <div class="exerciseHeader">
-          <div style="font-weight:700;">${escapeHtml(ex.name)}</div>
-          <div style="display:flex; gap:8px;">
-            <button class="secondary" style="width:auto;" data-addset="1" data-ex="${ex.id}">Add set</button>
-            <button class="danger" style="width:auto;" data-delex="1" data-ex="${ex.id}">Delete</button>
+          <div class="exerciseName">${escapeHtml(ex.name)}</div>
+          <div class="inlineBtns">
+            <button class="btnSecondary btnSmall" data-addset="1" data-ex="${ex.id}">Add set</button>
+            <button class="btnDanger btnSmall" data-delex="1" data-ex="${ex.id}">Delete</button>
           </div>
         </div>
         <div class="sets">${setsHtml || '<div class="muted">No sets yet. Click “Add set”.</div>'}</div>
@@ -383,15 +769,6 @@
 
       exList.appendChild(exDiv);
     }
-  }
-
-  function escapeHtml(str){
-    return String(str ?? "")
-      .replaceAll("&","&amp;")
-      .replaceAll("<","&lt;")
-      .replaceAll(">","&gt;")
-      .replaceAll('"',"&quot;")
-      .replaceAll("'","&#039;");
   }
 
   // ---------- Events ----------
@@ -420,11 +797,9 @@
     }
     if (el.dataset.delex){
       deleteExercise(el.dataset.ex);
-      toast("Exercise deleted");
     }
     if (el.dataset.delset){
       deleteSet(el.dataset.ex, el.dataset.set);
-      toast("Set deleted");
     }
   });
 
@@ -447,10 +822,8 @@
     e.target.value = "";
   });
 
-  // init date default
+  // init date default + initial render
   $("dateInput").value = new Date().toISOString().slice(0,10);
-
-  // initial render
   sortWorkouts();
   selectedWorkoutId = db.workouts[0]?.id ?? null;
   render();
@@ -464,6 +837,5 @@
     });
   }
 </script>
-
 </body>
 </html>
