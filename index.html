@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Workout Tracker</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#111111">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <style>
+    :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    body { margin: 0; background: #f6f7fb; color: #111; }
+    header { padding: 16px 20px; background: white; border-bottom: 1px solid #e7e7ee; position: sticky; top: 0; z-index: 10; }
+    main { max-width: 980px; margin: 0 auto; padding: 16px 20px 40px; display: grid; grid-template-columns: 360px 1fr; gap: 16px; }
+    @media (max-width: 900px){ main{ grid-template-columns: 1fr; } }
+    .card { background: white; border: 1px solid #e7e7ee; border-radius: 12px; padding: 14px; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+    h1 { margin: 0; font-size: 18px; }
+    h2 { margin: 0 0 10px; font-size: 14px; color: #333; text-transform: uppercase; letter-spacing: .06em; }
+    label { display: block; font-size: 12px; color: #444; margin: 10px 0 6px; }
+    input, textarea, button {
+      font: inherit; width: 100%; box-sizing: border-box;
+      padding: 10px; border: 1px solid #d9d9e6; border-radius: 10px; background: white;
+    }
+    textarea { min-height: 70px; resize: vertical; }
+    button { cursor: pointer; border: 1px solid #d0d0e0; background: #111; color: white; }
+    button.secondary { background: white; color: #111; }
+    button.danger { background: #b00020; border-color: #b00020; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .muted { color: #666; font-size: 12px; }
+    .list { display: grid; gap: 8px; }
+    .workoutItem { padding: 10px; border: 1px solid #eee; border-radius: 10px; display: grid; gap: 4px; }
+    .workoutItem.active { border-color: #111; }
+    .workoutTop { display:flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .pill { font-size: 12px; padding: 4px 8px; border: 1px solid #e7e7ee; border-radius: 999px; color: #333; background: #fafafa; }
+    .exercise { border: 1px solid #eee; border-radius: 12px; padding: 10px; margin-top: 10px; }
+    .exerciseHeader { display:flex; justify-content: space-between; align-items:center; gap: 10px; }
+    .sets { margin-top: 10px; display: grid; gap: 8px; }
+    .setRow { display: grid; grid-template-columns: 70px 1fr 1fr 1fr; gap: 8px; align-items: center; }
+    .setRow input { padding: 8px; border-radius: 8px; }
+    .setRow .setNum { font-size: 12px; color: #555; }
+    .actions { display:flex; gap: 8px; margin-top: 10px; }
+    .actions button { width: auto; padding: 10px 12px; }
+    .topActions { display:flex; gap: 8px; flex-wrap: wrap; }
+    .topActions button { width: auto; padding: 8px 10px; }
+    .split { display:flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .small { font-size: 12px; }
+    .hr { height: 1px; background: #eee; margin: 12px 0; }
+    .toast { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); background: #111; color: #fff; padding: 10px 12px; border-radius: 10px; opacity: 0; pointer-events:none; transition: opacity .2s; z-index: 20; }
+    .toast.show { opacity: 1; }
+  </style>
+</head>
+
+<body>
+<header class="split">
+  <h1>Workout Tracker</h1>
+  <div class="topActions">
+    <button class="secondary" id="exportBtn" title="Copy all data as JSON">Export</button>
+    <button class="secondary" id="importBtn" title="Import from a JSON backup">Import</button>
+    <button class="secondary" id="backupBtn" title="Download a JSON backup file">Download Backup</button>
+  </div>
+</header>
+
+<main>
+  <!-- Left: create + history -->
+  <section class="card">
+    <h2>New workout</h2>
+    <div class="row">
+      <div>
+        <label>Date</label>
+        <input type="date" id="dateInput" />
+      </div>
+      <div>
+        <label>Title</label>
+        <input type="text" id="titleInput" placeholder="Push / Pull / Legs..." />
+      </div>
+    </div>
+    <label>Notes</label>
+    <textarea id="notesInput" placeholder="How you felt, goals, etc."></textarea>
+    <div class="actions">
+      <button id="createWorkoutBtn">Create workout</button>
+      <button class="secondary" id="clearAllBtn" title="Deletes all workouts">Clear all</button>
+    </div>
+    <p class="muted">Saved locally on this device (no login). Use “Download Backup” occasionally.</p>
+
+    <div class="hr"></div>
+
+    <h2>History</h2>
+    <label>Search</label>
+    <input id="searchInput" placeholder="bench, squat, legs..." />
+    <div class="list" id="workoutList" style="margin-top:10px;"></div>
+  </section>
+
+  <!-- Right: workout detail -->
+  <section class="card">
+    <div id="emptyState" class="muted">
+      Select a workout from the left, or create one.
+    </div>
+
+    <div id="detail" style="display:none;">
+      <div class="workoutTop">
+        <div>
+          <div class="small muted" id="detailDate"></div>
+          <div style="font-size:18px; font-weight:700;" id="detailTitle"></div>
+        </div>
+        <button class="danger" id="deleteWorkoutBtn">Delete</button>
+      </div>
+
+      <label style="margin-top:12px;">Workout notes</label>
+      <textarea id="detailNotes"></textarea>
+
+      <div class="hr"></div>
+
+      <div class="split">
+        <h2 style="margin:0;">Exercises</h2>
+        <span class="pill" id="exerciseCountPill">0 exercises</span>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>Add exercise</label>
+          <input id="exerciseNameInput" placeholder="Bench Press" />
+        </div>
+        <div style="display:flex; align-items:flex-end;">
+          <button id="addExerciseBtn">Add</button>
+        </div>
+      </div>
+
+      <div id="exerciseList"></div>
+    </div>
+  </section>
+</main>
+
+<input type="file" id="filePicker" accept="application/json" style="display:none;" />
+<div class="toast" id="toast"></div>
+
+<script>
+  // ---------- Storage ----------
+  const KEY = "workout_tracker_v1";
+  const load = () => JSON.parse(localStorage.getItem(KEY) || '{"workouts":[]}');
+  const save = (data) => localStorage.setItem(KEY, JSON.stringify(data));
+  const uid = () => crypto.randomUUID();
+
+  // ---------- State ----------
+  let db = load();
+  let selectedWorkoutId = null;
+
+  // ---------- Helpers ----------
+  const $ = (id) => document.getElementById(id);
+
+  function toast(msg){
+    const t = $("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(()=>t.classList.remove("show"), 1200);
+  }
+
+  function workoutsFiltered(){
+    const q = $("searchInput").value.trim().toLowerCase();
+    if (!q) return db.workouts;
+    return db.workouts.filter(w => {
+      const hay = [
+        w.title || "",
+        w.notes || "",
+        ...w.exercises.map(e => e.name),
+        ...w.exercises.flatMap(e => e.sets.map(s => `${s.weight||""} ${s.reps||""} ${s.notes||""}`))
+      ].join(" ").toLowerCase();
+      return hay.includes(q);
+    });
+  }
+
+  function sortWorkouts(){
+    db.workouts.sort((a,b) => (b.date || "").localeCompare(a.date || ""));
+  }
+
+  function selectWorkout(id){
+    selectedWorkoutId = id;
+    render();
+  }
+
+  function getSelectedWorkout(){
+    return db.workouts.find(w => w.id === selectedWorkoutId) || null;
+  }
+
+  // ---------- CRUD ----------
+  function createWorkout(){
+    const date = $("dateInput").value;
+    const title = $("titleInput").value.trim();
+    const notes = $("notesInput").value.trim();
+
+    if (!date) return alert("Pick a date.");
+
+    const w = { id: uid(), date, title, notes, exercises: [] };
+    db.workouts.push(w);
+    sortWorkouts();
+    save(db);
+
+    $("titleInput").value = "";
+    $("notesInput").value = "";
+
+    toast("Workout created");
+    selectWorkout(w.id);
+  }
+
+  function deleteWorkout(){
+    const w = getSelectedWorkout();
+    if (!w) return;
+    if (!confirm("Delete this workout?")) return;
+
+    db.workouts = db.workouts.filter(x => x.id !== w.id);
+    selectedWorkoutId = null;
+    save(db);
+    toast("Workout deleted");
+    render();
+  }
+
+  function addExercise(){
+    const w = getSelectedWorkout();
+    if (!w) return;
+    const name = $("exerciseNameInput").value.trim();
+    if (!name) return;
+
+    w.exercises.push({ id: uid(), name, sets: [] });
+    $("exerciseNameInput").value = "";
+    save(db);
+    toast("Exercise added");
+    render();
+  }
+
+  function deleteExercise(exId){
+    const w = getSelectedWorkout();
+    w.exercises = w.exercises.filter(e => e.id !== exId);
+    save(db);
+    render();
+  }
+
+  function addSet(exId){
+    const w = getSelectedWorkout();
+    const ex = w.exercises.find(e => e.id === exId);
+    const next = ex.sets.length + 1;
+    ex.sets.push({ id: uid(), set_number: next, weight: "", reps: "", rpe: "", notes: "" });
+    save(db);
+    render();
+  }
+
+  function deleteSet(exId, setId){
+    const w = getSelectedWorkout();
+    const ex = w.exercises.find(e => e.id === exId);
+    ex.sets = ex.sets.filter(s => s.id !== setId);
+    ex.sets.forEach((s,i)=>s.set_number=i+1);
+    save(db);
+    render();
+  }
+
+  function updateWorkoutNotes(val){
+    const w = getSelectedWorkout();
+    w.notes = val;
+    save(db);
+  }
+
+  function updateSetField(exId, setId, field, val){
+    const w = getSelectedWorkout();
+    const ex = w.exercises.find(e => e.id === exId);
+    const s = ex.sets.find(x => x.id === setId);
+    s[field] = val;
+    save(db);
+  }
+
+  // ---------- Import/Export ----------
+  function exportJSON(){
+    const data = JSON.stringify(db, null, 2);
+    navigator.clipboard?.writeText(data).then(()=>toast("Copied JSON to clipboard")).catch(()=>{
+      prompt("Copy your data:", data);
+    });
+  }
+
+  function downloadBackup(){
+    const blob = new Blob([JSON.stringify(db, null, 2)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "workout-tracker-backup.json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  function importJSONFile(file){
+    const reader = new FileReader();
+    reader.onload = () => {
+      try{
+        const incoming = JSON.parse(reader.result);
+        if (!incoming || !Array.isArray(incoming.workouts)) throw new Error("Invalid file.");
+        db = incoming;
+        save(db);
+        selectedWorkoutId = db.workouts[0]?.id ?? null;
+        toast("Imported");
+        render();
+      } catch(e){
+        alert("Import failed: " + e.message);
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  // ---------- Render ----------
+  function render(){
+    const list = $("workoutList");
+    list.innerHTML = "";
+    sortWorkouts();
+    const items = workoutsFiltered();
+
+    if (items.length === 0){
+      list.innerHTML = `<div class="muted">No workouts found.</div>`;
+    } else {
+      for (const w of items){
+        const div = document.createElement("div");
+        div.className = "workoutItem" + (w.id === selectedWorkoutId ? " active" : "");
+        div.onclick = () => selectWorkout(w.id);
+        div.innerHTML = `
+          <div class="workoutTop">
+            <div><strong>${escapeHtml(w.date)}</strong></div>
+            <span class="pill">${w.exercises.length} ex</span>
+          </div>
+          <div>${escapeHtml(w.title || "Workout")}</div>
+          <div class="muted">${escapeHtml((w.notes || "").slice(0, 70))}${(w.notes||"").length>70?"…":""}</div>
+        `;
+        list.appendChild(div);
+      }
+    }
+
+    const w = getSelectedWorkout();
+    if (!w){
+      $("emptyState").style.display = "block";
+      $("detail").style.display = "none";
+      return;
+    }
+
+    $("emptyState").style.display = "none";
+    $("detail").style.display = "block";
+
+    $("detailDate").textContent = w.date;
+    $("detailTitle").textContent = w.title || "Workout";
+    $("detailNotes").value = w.notes || "";
+    $("exerciseCountPill").textContent = `${w.exercises.length} exercise${w.exercises.length===1?"":"s"}`;
+
+    const exList = $("exerciseList");
+    exList.innerHTML = "";
+
+    for (const ex of w.exercises){
+      const exDiv = document.createElement("div");
+      exDiv.className = "exercise";
+
+      const setsHtml = ex.sets.map(s => `
+        <div class="setRow">
+          <div class="setNum">Set ${s.set_number}</div>
+          <input inputmode="decimal" placeholder="Weight" value="${escapeHtml(s.weight)}"
+            data-ex="${ex.id}" data-set="${s.id}" data-field="weight" />
+          <input inputmode="numeric" placeholder="Reps" value="${escapeHtml(s.reps)}"
+            data-ex="${ex.id}" data-set="${s.id}" data-field="reps" />
+          <div style="display:flex; gap:8px;">
+            <input inputmode="decimal" placeholder="RPE" value="${escapeHtml(s.rpe)}"
+              data-ex="${ex.id}" data-set="${s.id}" data-field="rpe" />
+            <button class="secondary" style="width:auto; padding:8px 10px;"
+              data-delset="1" data-ex="${ex.id}" data-set="${s.id}">✕</button>
+          </div>
+        </div>
+        <input style="margin-top:6px;" placeholder="Set notes (optional)" value="${escapeHtml(s.notes)}"
+          data-ex="${ex.id}" data-set="${s.id}" data-field="notes" />
+      `).join("");
+
+      exDiv.innerHTML = `
+        <div class="exerciseHeader">
+          <div style="font-weight:700;">${escapeHtml(ex.name)}</div>
+          <div style="display:flex; gap:8px;">
+            <button class="secondary" style="width:auto;" data-addset="1" data-ex="${ex.id}">Add set</button>
+            <button class="danger" style="width:auto;" data-delex="1" data-ex="${ex.id}">Delete</button>
+          </div>
+        </div>
+        <div class="sets">${setsHtml || '<div class="muted">No sets yet. Click “Add set”.</div>'}</div>
+      `;
+
+      exList.appendChild(exDiv);
+    }
+  }
+
+  function escapeHtml(str){
+    return String(str ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+
+  // ---------- Events ----------
+  $("createWorkoutBtn").onclick = createWorkout;
+  $("addExerciseBtn").onclick = addExercise;
+  $("deleteWorkoutBtn").onclick = deleteWorkout;
+
+  $("searchInput").addEventListener("input", render);
+
+  $("detailNotes").addEventListener("input", (e) => updateWorkoutNotes(e.target.value));
+
+  $("exerciseList").addEventListener("input", (e) => {
+    const el = e.target;
+    if (!(el instanceof HTMLInputElement)) return;
+    const exId = el.dataset.ex, setId = el.dataset.set, field = el.dataset.field;
+    if (!exId || !setId || !field) return;
+    updateSetField(exId, setId, field, el.value);
+  });
+
+  $("exerciseList").addEventListener("click", (e) => {
+    const el = e.target;
+    if (!(el instanceof HTMLElement)) return;
+
+    if (el.dataset.addset){
+      addSet(el.dataset.ex);
+    }
+    if (el.dataset.delex){
+      deleteExercise(el.dataset.ex);
+      toast("Exercise deleted");
+    }
+    if (el.dataset.delset){
+      deleteSet(el.dataset.ex, el.dataset.set);
+      toast("Set deleted");
+    }
+  });
+
+  $("clearAllBtn").onclick = () => {
+    if (!confirm("This deletes ALL workouts on this device/browser. Continue?")) return;
+    db = { workouts: [] };
+    selectedWorkoutId = null;
+    save(db);
+    render();
+    toast("Cleared");
+  };
+
+  $("exportBtn").onclick = exportJSON;
+  $("backupBtn").onclick = downloadBackup;
+
+  $("importBtn").onclick = () => $("filePicker").click();
+  $("filePicker").addEventListener("change", (e) => {
+    const file = e.target.files?.[0];
+    if (file) importJSONFile(file);
+    e.target.value = "";
+  });
+
+  // init date default
+  $("dateInput").value = new Date().toISOString().slice(0,10);
+
+  // initial render
+  sortWorkouts();
+  selectedWorkoutId = db.workouts[0]?.id ?? null;
+  render();
+</script>
+
+<!-- Service Worker registration (PWA/offline) -->
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("/sw.js");
+    });
+  }
+</script>
+
+</body>
+</html>
