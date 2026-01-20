@@ -19,30 +19,16 @@
       --border: rgba(255,255,255,.10);
       --text: rgba(255,255,255,.92);
       --muted: rgba(255,255,255,.65);
-      --muted2: rgba(255,255,255,.50);
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --muted2: rgba(255,255,255,.45);
+      --shadow: 0 12px 34px rgba(0,0,0,.45);
       --radius: 16px;
       --radius2: 20px;
-      --ring: 0 0 0 3px rgba(99,102,241,.35); /* indigo-ish ring */
-      --accent: #7c3aed; /* violet */
-      --accent2: #22c55e; /* green */
+      --ring: 0 0 0 3px rgba(99,102,241,.35);
+      --accent: #7c3aed;
+      --accent2: #22c55e;
       --danger: #ef4444;
       --danger2: #b91c1c;
       --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-    }
-
-    /* light mode auto */
-    @media (prefers-color-scheme: light){
-      :root{
-        --bg: #f7f7fb;
-        --panel: rgba(0,0,0,.04);
-        --panel2: rgba(0,0,0,.06);
-        --border: rgba(0,0,0,.08);
-        --text: rgba(10,12,18,.92);
-        --muted: rgba(10,12,18,.62);
-        --muted2: rgba(10,12,18,.48);
-        --shadow: 0 10px 30px rgba(0,0,0,.12);
-      }
     }
 
     *{ box-sizing: border-box; }
@@ -53,37 +39,29 @@
       color: var(--text);
       background:
         radial-gradient(1200px 600px at 20% -10%, rgba(124,58,237,.35), transparent 60%),
-        radial-gradient(900px 500px at 90% 10%, rgba(34,197,94,.25), transparent 55%),
-        radial-gradient(700px 500px at 50% 100%, rgba(59,130,246,.20), transparent 60%),
+        radial-gradient(900px 500px at 90% 10%, rgba(34,197,94,.18), transparent 55%),
+        radial-gradient(700px 500px at 50% 100%, rgba(59,130,246,.12), transparent 60%),
         var(--bg);
     }
 
-    /* Header */
     header{
       position: sticky;
       top: 0;
       z-index: 50;
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      background: linear-gradient(to bottom, rgba(0,0,0,.35), rgba(0,0,0,.10));
+      background: linear-gradient(to bottom, rgba(0,0,0,.45), rgba(0,0,0,.15));
       border-bottom: 1px solid var(--border);
     }
-    @media (prefers-color-scheme: light){
-      header{
-        background: linear-gradient(to bottom, rgba(255,255,255,.75), rgba(255,255,255,.35));
-      }
-    }
-
     .headerInner{
-      max-width: 1100px;
+      max-width: 1160px;
       margin: 0 auto;
-      padding: 14px 18px;
+      padding: 14px 16px;
       display:flex;
       align-items:center;
       justify-content: space-between;
       gap: 12px;
     }
-
     .brand{
       display:flex;
       align-items:center;
@@ -93,11 +71,11 @@
     .logo{
       width: 38px; height: 38px;
       border-radius: 12px;
-      background: linear-gradient(135deg, rgba(124,58,237,.95), rgba(34,197,94,.75));
-      box-shadow: 0 12px 30px rgba(0,0,0,.25);
+      background: linear-gradient(135deg, rgba(124,58,237,.95), rgba(59,130,246,.65));
+      box-shadow: 0 14px 34px rgba(0,0,0,.35);
       display:grid;
       place-items:center;
-      font-weight: 800;
+      font-weight: 900;
       color: white;
       letter-spacing: -.02em;
       user-select:none;
@@ -105,8 +83,7 @@
     .brandText{ min-width: 0; }
     .brandTitle{
       font-size: 15px;
-      font-weight: 780;
-      letter-spacing: -.01em;
+      font-weight: 800;
       margin: 0;
       line-height: 1.1;
       white-space: nowrap;
@@ -123,24 +100,47 @@
       text-overflow: ellipsis;
     }
 
-    .topActions{
+    /* Tabs */
+    .tabs{
       display:flex;
       gap: 8px;
       flex-wrap: wrap;
       justify-content: flex-end;
+      align-items: center;
+    }
+    .tabBtn{
+      appearance: none;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 9px 12px;
+      cursor: pointer;
+      font-weight: 750;
+      font-size: 13px;
+      transition: transform .08s ease, background .15s ease, border-color .15s ease;
+      user-select: none;
+    }
+    .tabBtn:active{ transform: translateY(1px); }
+    .tabBtn.active{
+      border-color: rgba(124,58,237,.55);
+      box-shadow: var(--ring);
+      background: rgba(124,58,237,.14);
     }
 
     /* Layout */
-    main{
-      max-width: 1100px;
+    .page{
+      max-width: 1160px;
       margin: 0 auto;
-      padding: 18px;
+      padding: 16px;
+    }
+    .grid{
       display:grid;
       grid-template-columns: 380px 1fr;
       gap: 16px;
     }
     @media (max-width: 980px){
-      main{ grid-template-columns: 1fr; }
+      .grid{ grid-template-columns: 1fr; }
     }
 
     .card{
@@ -164,9 +164,8 @@
       color: var(--muted);
       letter-spacing: .12em;
       text-transform: uppercase;
-      font-weight: 800;
+      font-weight: 850;
     }
-
     .pill{
       font-size: 12px;
       padding: 5px 10px;
@@ -182,7 +181,7 @@
       font-size: 12px;
       color: var(--muted);
       margin: 10px 0 6px;
-      font-weight: 600;
+      font-weight: 700;
     }
 
     .row{
@@ -194,10 +193,7 @@
       .row{ grid-template-columns: 1fr; }
     }
 
-    input, textarea, button{
-      font: inherit;
-    }
-
+    input, textarea, button{ font: inherit; }
     input, textarea{
       width: 100%;
       border: 1px solid var(--border);
@@ -206,7 +202,7 @@
       border-radius: 14px;
       padding: 11px 12px;
       outline: none;
-      transition: transform .08s ease, border-color .15s ease, background .15s ease;
+      transition: border-color .15s ease, background .15s ease, box-shadow .15s ease;
     }
     input::placeholder, textarea::placeholder{ color: var(--muted2); }
     input:focus, textarea:focus{
@@ -215,7 +211,7 @@
       background: rgba(255,255,255,.08);
     }
     textarea{
-      min-height: 80px;
+      min-height: 82px;
       resize: vertical;
       line-height: 1.35;
     }
@@ -227,38 +223,39 @@
       flex-wrap: wrap;
     }
 
-    button{
+    .btn{
       width: 100%;
       border-radius: 14px;
       padding: 11px 12px;
       border: 1px solid var(--border);
       cursor: pointer;
-      transition: transform .08s ease, background .15s ease, border-color .15s ease, opacity .15s ease;
       user-select: none;
+      transition: transform .08s ease, background .15s ease, border-color .15s ease;
     }
-    button:active{ transform: translateY(1px); }
+    .btn:active{ transform: translateY(1px); }
 
     .btnPrimary{
-      background: linear-gradient(135deg, rgba(124,58,237,.95), rgba(59,130,246,.75));
+      background: linear-gradient(135deg, rgba(124,58,237,.95), rgba(59,130,246,.70));
       border-color: rgba(124,58,237,.55);
       color: white;
-      font-weight: 750;
+      font-weight: 850;
     }
     .btnSecondary{
       background: rgba(255,255,255,.06);
       color: var(--text);
     }
     .btnDanger{
-      background: linear-gradient(135deg, rgba(239,68,68,.95), rgba(185,28,28,.75));
+      background: linear-gradient(135deg, rgba(239,68,68,.95), rgba(185,28,28,.70));
       border-color: rgba(239,68,68,.55);
       color: white;
-      font-weight: 750;
+      font-weight: 850;
     }
     .btnSmall{
       width: auto;
       padding: 9px 10px;
       border-radius: 12px;
       font-size: 13px;
+      font-weight: 800;
     }
 
     .muted{
@@ -274,11 +271,17 @@
       margin: 14px 0;
     }
 
-    /* History list */
-    .list{
-      display:grid;
-      gap: 10px;
-      margin-top: 10px;
+    /* Workouts list */
+    .list{ display:grid; gap: 10px; margin-top: 10px; }
+    .groupHeader{
+      margin-top: 12px;
+      padding-top: 8px;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      border-top: 1px solid var(--border);
     }
 
     .workoutItem{
@@ -287,16 +290,15 @@
       padding: 12px;
       background: rgba(255,255,255,.04);
       cursor: pointer;
-      transition: transform .08s ease, background .15s ease, border-color .15s ease;
+      transition: background .15s ease, border-color .15s ease, box-shadow .15s ease, transform .08s ease;
     }
     .workoutItem:hover{ background: rgba(255,255,255,.06); }
     .workoutItem:active{ transform: translateY(1px); }
     .workoutItem.active{
       border-color: rgba(124,58,237,.55);
       box-shadow: var(--ring);
-      background: rgba(124,58,237,.10);
+      background: rgba(124,58,237,.12);
     }
-
     .workoutTop{
       display:flex;
       align-items:center;
@@ -304,18 +306,9 @@
       gap: 10px;
       margin-bottom: 6px;
     }
-    .dateStrong{ font-weight: 800; letter-spacing: -.01em; }
-    .titleLine{
-      font-weight: 750;
-      letter-spacing: -.01em;
-      line-height: 1.25;
-    }
-    .snippet{
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.35;
-      margin-top: 4px;
-    }
+    .dateStrong{ font-weight: 900; letter-spacing: -.01em; }
+    .titleLine{ font-weight: 850; letter-spacing: -.01em; line-height: 1.25; }
+    .snippet{ color: var(--muted); font-size: 12px; line-height: 1.35; margin-top: 4px; }
 
     /* Detail */
     .detailTop{
@@ -325,7 +318,7 @@
       gap: 10px;
     }
     .detailDate{ font-size: 12px; color: var(--muted); margin-top: 2px; }
-    .detailTitle{ font-size: 20px; font-weight: 850; letter-spacing: -.02em; margin: 2px 0 0; }
+    .detailTitle{ font-size: 20px; font-weight: 950; letter-spacing: -.02em; margin: 2px 0 0; }
 
     /* Exercises */
     .exercise{
@@ -335,7 +328,6 @@
       padding: 12px;
       background: rgba(255,255,255,.04);
     }
-
     .exerciseHeader{
       display:flex;
       align-items:center;
@@ -343,16 +335,20 @@
       gap: 10px;
     }
     .exerciseName{
-      font-weight: 850;
+      font-weight: 950;
       letter-spacing: -.01em;
     }
-
+    .inlineBtns{
+      display:flex;
+      gap: 8px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
     .sets{
       margin-top: 10px;
       display:grid;
       gap: 10px;
     }
-
     .setRow{
       display:grid;
       grid-template-columns: 70px 1fr 1fr 1fr;
@@ -363,18 +359,84 @@
       .setRow{ grid-template-columns: 60px 1fr 1fr; }
       .setRow .col3{ grid-column: span 2; }
     }
+    .setNum{ font-size: 12px; color: var(--muted); font-weight: 800; }
 
-    .setNum{
+    /* Calendar */
+    .calHeader{
+      display:flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .calTitle{
+      font-size: 16px;
+      font-weight: 950;
+      letter-spacing: -.02em;
+    }
+    .calGrid{
+      display:grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+    }
+    .dow{
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 850;
+      text-transform: uppercase;
+      letter-spacing: .10em;
+      padding: 6px 6px 2px;
+    }
+    .day{
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: rgba(255,255,255,.04);
+      min-height: 90px;
+      padding: 10px;
+      cursor: pointer;
+      transition: background .15s ease, border-color .15s ease, box-shadow .15s ease, transform .08s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .day:hover{ background: rgba(255,255,255,.06); }
+    .day:active{ transform: translateY(1px); }
+    .day.mutedDay{
+      opacity: .45;
+    }
+    .day.active{
+      border-color: rgba(124,58,237,.55);
+      box-shadow: var(--ring);
+      background: rgba(124,58,237,.12);
+    }
+    .dayNum{
+      font-weight: 950;
+      letter-spacing: -.01em;
+      font-size: 13px;
+    }
+    .dots{
+      display:flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+    .dot{
+      width: 8px; height: 8px;
+      border-radius: 999px;
+      background: rgba(124,58,237,.95);
+      box-shadow: 0 0 0 2px rgba(124,58,237,.15);
+    }
+    .badge{
+      margin-top: 10px;
+      display:inline-flex;
+      gap: 6px;
+      align-items:center;
       font-size: 12px;
       color: var(--muted);
-      font-weight: 700;
-    }
-
-    .inlineBtns{
-      display:flex;
-      gap: 8px;
-      justify-content: flex-end;
-      flex-wrap: wrap;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      border-radius: 999px;
+      padding: 6px 10px;
     }
 
     /* Toast */
@@ -395,9 +457,11 @@
       z-index: 80;
       max-width: calc(100% - 32px);
       text-align: center;
-      font-weight: 650;
+      font-weight: 750;
     }
     .toast.show{ opacity: 1; }
+
+    .hidden{ display:none !important; }
   </style>
 </head>
 
@@ -405,101 +469,150 @@
 <header>
   <div class="headerInner">
     <div class="brand">
-      <div class="logo">W</div>
+      <div class="logo">🏋️</div>
       <div class="brandText">
         <p class="brandTitle">Workout Tracker</p>
-        <p class="brandSub">Local saves · PWA install · Backup anytime</p>
+        <p class="brandSub">Dark mode • Calendar • Backup anytime</p>
       </div>
     </div>
-    <div class="topActions">
-      <button class="btnSecondary btnSmall" id="exportBtn" title="Copy all data as JSON">Export</button>
-      <button class="btnSecondary btnSmall" id="importBtn" title="Import from a JSON backup">Import</button>
-      <button class="btnSecondary btnSmall" id="backupBtn" title="Download a JSON backup file">Backup</button>
+
+    <div class="tabs">
+      <button class="tabBtn active" id="tabWorkoutsBtn" data-tab="workouts">Workouts</button>
+      <button class="tabBtn" id="tabCalendarBtn" data-tab="calendar">Calendar</button>
+      <button class="btn btnSecondary btnSmall" id="exportBtn" title="Copy all data as JSON">Export</button>
+      <button class="btn btnSecondary btnSmall" id="importBtn" title="Import from a JSON backup">Import</button>
+      <button class="btn btnSecondary btnSmall" id="backupBtn" title="Download a JSON backup file">Backup</button>
     </div>
   </div>
 </header>
 
-<main>
-  <!-- Left: create + history -->
-  <section class="card">
-    <div class="sectionTitle">
-      <h2>New workout</h2>
-      <span class="pill">quick add</span>
-    </div>
+<div class="page">
 
-    <div class="row">
-      <div>
-        <label>Date</label>
-        <input type="date" id="dateInput" />
-      </div>
-      <div>
-        <label>Title</label>
-        <input type="text" id="titleInput" placeholder="Push / Pull / Legs..." />
-      </div>
-    </div>
-
-    <label>Notes</label>
-    <textarea id="notesInput" placeholder="How you felt, goals, cues, etc."></textarea>
-
-    <div class="actions">
-      <button class="btnPrimary" id="createWorkoutBtn">Create workout</button>
-      <button class="btnSecondary" id="clearAllBtn" title="Deletes all workouts on this device">Clear all</button>
-    </div>
-
-    <p class="muted">Tip: use “Backup” once in a while so you never lose your logs.</p>
-
-    <div class="divider"></div>
-
-    <div class="sectionTitle">
-      <h2>History</h2>
-      <span class="pill" id="historyCountPill">0</span>
-    </div>
-
-    <label>Search</label>
-    <input id="searchInput" placeholder="bench, squat, legs..." />
-
-    <div class="list" id="workoutList"></div>
-  </section>
-
-  <!-- Right: workout detail -->
-  <section class="card">
-    <div id="emptyState" class="muted">
-      Select a workout from the left, or create one.
-    </div>
-
-    <div id="detail" style="display:none;">
-      <div class="detailTop">
-        <div>
-          <div class="detailDate" id="detailDate"></div>
-          <div class="detailTitle" id="detailTitle"></div>
+  <!-- WORKOUTS TAB -->
+  <div id="tabWorkouts">
+    <div class="grid">
+      <!-- Left: create + history -->
+      <section class="card">
+        <div class="sectionTitle">
+          <h2>New workout</h2>
+          <span class="pill">quick add</span>
         </div>
-        <button class="btnDanger btnSmall" id="deleteWorkoutBtn">Delete</button>
-      </div>
 
-      <label style="margin-top:12px;">Workout notes</label>
-      <textarea id="detailNotes" placeholder="Notes for this session..."></textarea>
-
-      <div class="divider"></div>
-
-      <div class="sectionTitle">
-        <h2>Exercises</h2>
-        <span class="pill" id="exerciseCountPill">0 exercises</span>
-      </div>
-
-      <div class="row">
-        <div>
-          <label>Add exercise</label>
-          <input id="exerciseNameInput" placeholder="Bench Press" />
+        <div class="row">
+          <div>
+            <label>Date</label>
+            <input type="date" id="dateInput" />
+          </div>
+          <div>
+            <label>Title</label>
+            <input type="text" id="titleInput" placeholder="Push / Pull / Legs..." />
+          </div>
         </div>
-        <div style="display:flex; align-items:flex-end;">
-          <button class="btnPrimary" id="addExerciseBtn">Add</button>
-        </div>
-      </div>
 
-      <div id="exerciseList"></div>
+        <label>Notes</label>
+        <textarea id="notesInput" placeholder="How you felt, goals, cues, etc."></textarea>
+
+        <div class="actions">
+          <button class="btn btnPrimary" id="createWorkoutBtn">Create workout</button>
+          <button class="btn btnSecondary" id="clearAllBtn" title="Deletes all workouts on this device">Clear all</button>
+        </div>
+
+        <p class="muted">Tip: use “Backup” once in a while so you never lose your logs.</p>
+
+        <div class="divider"></div>
+
+        <div class="sectionTitle">
+          <h2>History</h2>
+          <span class="pill" id="historyCountPill">0</span>
+        </div>
+
+        <label>Search</label>
+        <input id="searchInput" placeholder="bench, squat, legs..." />
+
+        <div class="list" id="workoutList"></div>
+      </section>
+
+      <!-- Right: workout detail -->
+      <section class="card">
+        <div id="emptyState" class="muted">
+          Select a workout from the left (or create one).
+        </div>
+
+        <div id="detail" class="hidden">
+          <div class="detailTop">
+            <div>
+              <div class="detailDate" id="detailDate"></div>
+              <div class="detailTitle" id="detailTitle"></div>
+            </div>
+            <button class="btn btnDanger btnSmall" id="deleteWorkoutBtn">Delete</button>
+          </div>
+
+          <label style="margin-top:12px;">Workout notes</label>
+          <textarea id="detailNotes" placeholder="Notes for this session..."></textarea>
+
+          <div class="divider"></div>
+
+          <div class="sectionTitle">
+            <h2>Exercises</h2>
+            <span class="pill" id="exerciseCountPill">0 exercises</span>
+          </div>
+
+          <div class="row">
+            <div>
+              <label>Add exercise</label>
+              <input id="exerciseNameInput" placeholder="Bench Press" />
+            </div>
+            <div style="display:flex; align-items:flex-end;">
+              <button class="btn btnPrimary" id="addExerciseBtn">Add</button>
+            </div>
+          </div>
+
+          <div id="exerciseList"></div>
+        </div>
+      </section>
     </div>
-  </section>
-</main>
+  </div>
+
+  <!-- CALENDAR TAB -->
+  <div id="tabCalendar" class="hidden">
+    <div class="grid">
+      <section class="card">
+        <div class="calHeader">
+          <div>
+            <div class="calTitle" id="calTitle">Month</div>
+            <div class="muted" id="calSubtitle">Tap a day to see workouts</div>
+          </div>
+          <div class="inlineBtns">
+            <button class="btn btnSecondary btnSmall" id="calPrevBtn">◀</button>
+            <button class="btn btnSecondary btnSmall" id="calTodayBtn">Today</button>
+            <button class="btn btnSecondary btnSmall" id="calNextBtn">▶</button>
+          </div>
+        </div>
+
+        <div class="calGrid" id="calDow"></div>
+        <div class="calGrid" id="calGrid"></div>
+
+        <div style="margin-top: 12px;">
+          <span class="badge" id="calLegend">
+            <span class="dot"></span> Day with workouts
+          </span>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="sectionTitle">
+          <h2 id="calDayTitle">Selected day</h2>
+          <span class="pill" id="calDayCountPill">0</span>
+        </div>
+
+        <div class="muted" id="calDayHint">Pick a day on the calendar.</div>
+
+        <div class="list" id="calDayWorkoutList"></div>
+      </section>
+    </div>
+  </div>
+
+</div>
 
 <input type="file" id="filePicker" accept="application/json" style="display:none;" />
 <div class="toast" id="toast"></div>
@@ -515,6 +628,12 @@
   let db = load();
   let selectedWorkoutId = null;
 
+  // calendar state
+  const today = new Date();
+  let calYear = today.getFullYear();
+  let calMonth = today.getMonth(); // 0-11
+  let selectedDateStr = null; // "YYYY-MM-DD"
+
   // ---------- Helpers ----------
   const $ = (id) => document.getElementById(id);
 
@@ -523,6 +642,19 @@
     t.textContent = msg;
     t.classList.add("show");
     setTimeout(()=>t.classList.remove("show"), 1200);
+  }
+
+  function escapeHtml(str){
+    return String(str ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+
+  function sortWorkouts(){
+    db.workouts.sort((a,b) => (b.date || "").localeCompare(a.date || ""));
   }
 
   function workoutsFiltered(){
@@ -539,26 +671,46 @@
     });
   }
 
-  function sortWorkouts(){
-    db.workouts.sort((a,b) => (b.date || "").localeCompare(a.date || ""));
-  }
-
   function selectWorkout(id){
     selectedWorkoutId = id;
-    render();
+    renderWorkoutsTab();
+    // also refresh calendar side list (if it shows same day's items)
+    renderCalendarDayList();
   }
 
   function getSelectedWorkout(){
     return db.workouts.find(w => w.id === selectedWorkoutId) || null;
   }
 
-  function escapeHtml(str){
-    return String(str ?? "")
-      .replaceAll("&","&amp;")
-      .replaceAll("<","&lt;")
-      .replaceAll(">","&gt;")
-      .replaceAll('"',"&quot;")
-      .replaceAll("'","&#039;");
+  function monthKeyFromDateStr(dateStr){
+    // "YYYY-MM-DD" -> "YYYY-MM"
+    return (dateStr || "").slice(0,7);
+  }
+
+  function monthLabel(yyyyMM){
+    const [y, m] = yyyyMM.split("-").map(Number);
+    const d = new Date(y, m - 1, 1);
+    return d.toLocaleString(undefined, { month: "long", year: "numeric" });
+  }
+
+  function dateToStr(d){
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,"0");
+    const day = String(d.getDate()).padStart(2,"0");
+    return `${y}-${m}-${day}`;
+  }
+
+  function workoutsByDateMap(){
+    const map = new Map(); // dateStr -> workouts[]
+    for (const w of db.workouts){
+      if (!map.has(w.date)) map.set(w.date, []);
+      map.get(w.date).push(w);
+    }
+    // keep newest first per day
+    for (const [k, arr] of map.entries()){
+      arr.sort((a,b)=> (b.date||"").localeCompare(a.date||""));
+    }
+    return map;
   }
 
   // ---------- CRUD ----------
@@ -579,6 +731,9 @@
 
     toast("Workout created");
     selectWorkout(w.id);
+
+    // If calendar is on same month, refresh dots
+    renderCalendar();
   }
 
   function deleteWorkout(){
@@ -590,7 +745,9 @@
     selectedWorkoutId = null;
     save(db);
     toast("Workout deleted");
-    render();
+    renderWorkoutsTab();
+    renderCalendar();
+    renderCalendarDayList();
   }
 
   function addExercise(){
@@ -603,7 +760,7 @@
     $("exerciseNameInput").value = "";
     save(db);
     toast("Exercise added");
-    render();
+    renderWorkoutsTab();
   }
 
   function deleteExercise(exId){
@@ -611,7 +768,7 @@
     w.exercises = w.exercises.filter(e => e.id !== exId);
     save(db);
     toast("Exercise deleted");
-    render();
+    renderWorkoutsTab();
   }
 
   function addSet(exId){
@@ -621,7 +778,7 @@
     ex.sets.push({ id: uid(), set_number: next, weight: "", reps: "", rpe: "", notes: "" });
     save(db);
     toast("Set added");
-    render();
+    renderWorkoutsTab();
   }
 
   function deleteSet(exId, setId){
@@ -631,7 +788,7 @@
     ex.sets.forEach((s,i)=>s.set_number=i+1);
     save(db);
     toast("Set deleted");
-    render();
+    renderWorkoutsTab();
   }
 
   function updateWorkoutNotes(val){
@@ -673,9 +830,10 @@
         if (!incoming || !Array.isArray(incoming.workouts)) throw new Error("Invalid file.");
         db = incoming;
         save(db);
+        sortWorkouts();
         selectedWorkoutId = db.workouts[0]?.id ?? null;
         toast("Imported");
-        render();
+        renderAll();
       } catch(e){
         alert("Import failed: " + e.message);
       }
@@ -683,22 +841,50 @@
     reader.readAsText(file);
   }
 
-  // ---------- Render ----------
-  function render(){
+  // ---------- Tabs ----------
+  function setActiveTab(tab){
+    // buttons
+    const buttons = document.querySelectorAll(".tabBtn");
+    buttons.forEach(b => b.classList.toggle("active", b.dataset.tab === tab));
+
+    $("tabWorkouts").classList.toggle("hidden", tab !== "workouts");
+    $("tabCalendar").classList.toggle("hidden", tab !== "calendar");
+
+    if (tab === "calendar"){
+      // default: show current month; select today (or keep selection)
+      renderCalendar();
+      if (!selectedDateStr) selectedDateStr = dateToStr(new Date());
+      renderCalendarDayList();
+    }
+  }
+
+  // ---------- Render: Workouts ----------
+  function renderWorkoutsTab(){
     sortWorkouts();
 
-    // History count pill
+    // History count
     $("historyCountPill").textContent = String(workoutsFiltered().length);
 
-    // left list
+    // Left list grouped by month
     const list = $("workoutList");
     list.innerHTML = "";
-    const items = workoutsFiltered();
 
+    const items = workoutsFiltered();
     if (items.length === 0){
       list.innerHTML = `<div class="muted">No workouts found.</div>`;
     } else {
+      let currentGroup = null;
+
       for (const w of items){
+        const mk = monthKeyFromDateStr(w.date);
+        if (mk !== currentGroup){
+          currentGroup = mk;
+          const gh = document.createElement("div");
+          gh.className = "groupHeader";
+          gh.textContent = monthLabel(mk);
+          list.appendChild(gh);
+        }
+
         const div = document.createElement("div");
         div.className = "workoutItem" + (w.id === selectedWorkoutId ? " active" : "");
         div.onclick = () => selectWorkout(w.id);
@@ -716,16 +902,16 @@
       }
     }
 
-    // detail panel
+    // Detail panel
     const w = getSelectedWorkout();
     if (!w){
-      $("emptyState").style.display = "block";
-      $("detail").style.display = "none";
+      $("emptyState").classList.remove("hidden");
+      $("detail").classList.add("hidden");
       return;
     }
 
-    $("emptyState").style.display = "none";
-    $("detail").style.display = "block";
+    $("emptyState").classList.add("hidden");
+    $("detail").classList.remove("hidden");
 
     $("detailDate").textContent = w.date;
     $("detailTitle").textContent = w.title || "Workout";
@@ -749,7 +935,7 @@
           <div class="col3" style="display:flex; gap:8px;">
             <input inputmode="decimal" placeholder="RPE" value="${escapeHtml(s.rpe)}"
               data-ex="${ex.id}" data-set="${s.id}" data-field="rpe" />
-            <button class="btnSecondary btnSmall" style="width:auto;" data-delset="1" data-ex="${ex.id}" data-set="${s.id}">✕</button>
+            <button class="btn btnSecondary btnSmall" style="width:auto;" data-delset="1" data-ex="${ex.id}" data-set="${s.id}">✕</button>
           </div>
         </div>
         <input placeholder="Set notes (optional)" value="${escapeHtml(s.notes)}"
@@ -760,15 +946,128 @@
         <div class="exerciseHeader">
           <div class="exerciseName">${escapeHtml(ex.name)}</div>
           <div class="inlineBtns">
-            <button class="btnSecondary btnSmall" data-addset="1" data-ex="${ex.id}">Add set</button>
-            <button class="btnDanger btnSmall" data-delex="1" data-ex="${ex.id}">Delete</button>
+            <button class="btn btnSecondary btnSmall" data-addset="1" data-ex="${ex.id}">Add set</button>
+            <button class="btn btnDanger btnSmall" data-delex="1" data-ex="${ex.id}">Delete</button>
           </div>
         </div>
         <div class="sets">${setsHtml || '<div class="muted">No sets yet. Click “Add set”.</div>'}</div>
       `;
-
       exList.appendChild(exDiv);
     }
+  }
+
+  // ---------- Render: Calendar ----------
+  function renderCalendar(){
+    // Title
+    const d = new Date(calYear, calMonth, 1);
+    $("calTitle").textContent = d.toLocaleString(undefined, { month: "long", year: "numeric" });
+
+    // Day-of-week header
+    const dow = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+    const dowEl = $("calDow");
+    dowEl.innerHTML = "";
+    for (const name of dow){
+      const cell = document.createElement("div");
+      cell.className = "dow";
+      cell.textContent = name;
+      dowEl.appendChild(cell);
+    }
+
+    // Build month grid (6 rows x 7 = 42)
+    const firstDay = new Date(calYear, calMonth, 1);
+    const startDow = firstDay.getDay(); // 0=Sun
+    const gridStart = new Date(calYear, calMonth, 1 - startDow);
+
+    const map = workoutsByDateMap();
+
+    const grid = $("calGrid");
+    grid.innerHTML = "";
+
+    for (let i=0; i<42; i++){
+      const dayDate = new Date(gridStart);
+      dayDate.setDate(gridStart.getDate() + i);
+
+      const dayStr = dateToStr(dayDate);
+      const inMonth = dayDate.getMonth() === calMonth;
+      const workouts = map.get(dayStr) || [];
+
+      const cell = document.createElement("div");
+      cell.className = "day" + (inMonth ? "" : " mutedDay") + (dayStr === selectedDateStr ? " active" : "");
+
+      const dots = workouts.length
+        ? `<div class="dots">${new Array(Math.min(workouts.length, 6)).fill(0).map(()=>`<span class="dot"></span>`).join("")}</div>`
+        : "";
+
+      cell.innerHTML = `
+        <div class="dayNum">${dayDate.getDate()}</div>
+        ${dots}
+      `;
+
+      cell.onclick = () => {
+        selectedDateStr = dayStr;
+        renderCalendar();
+        renderCalendarDayList();
+      };
+
+      grid.appendChild(cell);
+    }
+  }
+
+  function renderCalendarDayList(){
+    const map = workoutsByDateMap();
+    const list = $("calDayWorkoutList");
+    const hint = $("calDayHint");
+
+    if (!selectedDateStr){
+      $("calDayTitle").textContent = "Selected day";
+      $("calDayCountPill").textContent = "0";
+      hint.textContent = "Pick a day on the calendar.";
+      hint.classList.remove("hidden");
+      list.innerHTML = "";
+      return;
+    }
+
+    const workouts = map.get(selectedDateStr) || [];
+    $("calDayTitle").textContent = selectedDateStr;
+    $("calDayCountPill").textContent = String(workouts.length);
+
+    list.innerHTML = "";
+
+    if (workouts.length === 0){
+      hint.textContent = "No workouts logged on this day.";
+      hint.classList.remove("hidden");
+      return;
+    }
+
+    hint.classList.add("hidden");
+
+    for (const w of workouts){
+      const div = document.createElement("div");
+      div.className = "workoutItem" + (w.id === selectedWorkoutId ? " active" : "");
+      div.onclick = () => {
+        // jump to workouts tab + select
+        setActiveTab("workouts");
+        selectWorkout(w.id);
+      };
+
+      const snippet = (w.notes || "").trim();
+      div.innerHTML = `
+        <div class="workoutTop">
+          <div class="dateStrong">${escapeHtml(w.date)}</div>
+          <span class="pill">${w.exercises.length} ex</span>
+        </div>
+        <div class="titleLine">${escapeHtml(w.title || "Workout")}</div>
+        <div class="snippet">${escapeHtml(snippet.slice(0, 70))}${snippet.length>70?"…":""}</div>
+      `;
+      list.appendChild(div);
+    }
+  }
+
+  // ---------- Render All ----------
+  function renderAll(){
+    renderWorkoutsTab();
+    renderCalendar();
+    renderCalendarDayList();
   }
 
   // ---------- Events ----------
@@ -776,7 +1075,7 @@
   $("addExerciseBtn").onclick = addExercise;
   $("deleteWorkoutBtn").onclick = deleteWorkout;
 
-  $("searchInput").addEventListener("input", render);
+  $("searchInput").addEventListener("input", renderWorkoutsTab);
 
   $("detailNotes").addEventListener("input", (e) => updateWorkoutNotes(e.target.value));
 
@@ -792,15 +1091,9 @@
     const el = e.target;
     if (!(el instanceof HTMLElement)) return;
 
-    if (el.dataset.addset){
-      addSet(el.dataset.ex);
-    }
-    if (el.dataset.delex){
-      deleteExercise(el.dataset.ex);
-    }
-    if (el.dataset.delset){
-      deleteSet(el.dataset.ex, el.dataset.set);
-    }
+    if (el.dataset.addset) addSet(el.dataset.ex);
+    if (el.dataset.delex) deleteExercise(el.dataset.ex);
+    if (el.dataset.delset) deleteSet(el.dataset.ex, el.dataset.set);
   });
 
   $("clearAllBtn").onclick = () => {
@@ -808,8 +1101,8 @@
     db = { workouts: [] };
     selectedWorkoutId = null;
     save(db);
-    render();
     toast("Cleared");
+    renderAll();
   };
 
   $("exportBtn").onclick = exportJSON;
@@ -822,11 +1115,37 @@
     e.target.value = "";
   });
 
+  // Tabs click
+  document.querySelectorAll(".tabBtn").forEach(btn => {
+    btn.addEventListener("click", () => setActiveTab(btn.dataset.tab));
+  });
+
+  // Calendar controls
+  $("calPrevBtn").onclick = () => {
+    calMonth -= 1;
+    if (calMonth < 0){ calMonth = 11; calYear -= 1; }
+    renderCalendar();
+  };
+  $("calNextBtn").onclick = () => {
+    calMonth += 1;
+    if (calMonth > 11){ calMonth = 0; calYear += 1; }
+    renderCalendar();
+  };
+  $("calTodayBtn").onclick = () => {
+    const now = new Date();
+    calYear = now.getFullYear();
+    calMonth = now.getMonth();
+    selectedDateStr = dateToStr(now);
+    renderCalendar();
+    renderCalendarDayList();
+  };
+
   // init date default + initial render
   $("dateInput").value = new Date().toISOString().slice(0,10);
   sortWorkouts();
   selectedWorkoutId = db.workouts[0]?.id ?? null;
-  render();
+  selectedDateStr = dateToStr(new Date());
+  renderAll();
 </script>
 
 <!-- Service Worker registration (PWA/offline) -->
